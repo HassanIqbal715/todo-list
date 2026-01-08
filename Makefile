@@ -1,5 +1,2 @@
 build: src/main.cpp
-	@g++ -o build/main.o src/main.cpp
-
-run:
-	@./build/main.o
+	@g++ -o main.o src/main.cpp src/file.cpp src/taskHandler.cpp src/json.cpp
