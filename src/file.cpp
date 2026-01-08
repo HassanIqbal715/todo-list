@@ -56,7 +56,7 @@ string* File::readFile() {
     file.seekg(0);
 
     string line;
-    string data[500];
+    string* data = new string[500];
     int index = 0;
     while(getline(file, line)) {
         data[index++] = line;
