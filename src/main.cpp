@@ -1,7 +1,9 @@
 #include <iostream>
+#include <string>
 #include "../include/taskHandler.h"
 #include "../include/file.h"
 #include "../include/json.h"
+#include "../include/task.h"
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -10,31 +12,45 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    JsonObject o1;
-    string what = "hassan";
-    o1.appendKeyValue("name", static_cast<void*>(&what));
-    cout << *static_cast<string*>(o1.getValue("name")) << endl;
-
     File* file = new File("data/tasks.json");
     string* data = file->readFile();
+    vector<JsonObject*> objects;
 
     for (int i = 0; data[i] != "\0"; i++) {
-        vector<JsonObject*> objects = JSON::instance()->readLine(data[i]);
-        for (int j = 0; j < objects.size(); j++) {
-            objects[j]->print();
+        vector<JsonObject*> tempObjects = JSON::instance()->readLine(data[i]);
+        for (int j = 0; j < tempObjects.size(); j++) {
+            objects.push_back(tempObjects[j]);
         }
     }
 
-    // if (argv[1] == "add") {
-    //     TaskHandler::instance()->addTask(argv[2]);
-    // }
+    vector<Task*> tasks;
+
+    for (int i = 0; i < objects.size(); i++) {
+        TaskHandler::instance()->extractTask(tasks, objects[i]);
+    }
+
+    string arg1 = argv[1];
+    if (arg1.compare("add") == 0) {
+        cout << "what";
+        TaskHandler::instance()->addTask(tasks, argv[2]);
+        TaskHandler::instance()->writeTasks(tasks, file);
+    }
+
     // else if (argv[1] == "update") {
     //     TaskHandler::instance()->updateTask();
     // }
-    // else if (argv[1] == "delete") {
-    //     TaskHandler::instance()->deleteTask();
-    // }
-    // else if (argv[1] = "list") {
-    //     TaskHandler::instance()->listTasks();
-    // }
+    else if (arg1.compare("delete") == 0) {
+        if (argv[2] == NULL || argv[2] == "")
+            return 1;
+        string arg2 = argv[2];
+        TaskHandler::instance()->deleteTask(tasks, stoi(arg2));
+        TaskHandler::instance()->writeTasks(tasks, file);
+    }
+    else if (arg1.compare("list") == 0) {
+        TaskHandler::instance()->listTasks(tasks);
+    }
+    
+    delete[] data;
+    delete file;
+    JSON::instance()->destroyObjectsVector(objects);
 }
