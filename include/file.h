@@ -14,7 +14,8 @@ public:
     File(string Path);
     void createFile();
     bool openFile();
-    void writeFile(string line);
+    void writeFile(string line, bool pointerReset);
+    void clearFile();
     string* readFile();
     ~File();
 };

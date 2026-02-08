@@ -38,22 +38,24 @@ bool File::openFile() {
     if (!std::filesystem::exists(filePath))
         createFile();
 
-    file.open(filePath, std::ios_base::openmode::_S_app |
-        std::ios_base::openmode::_S_in);
+    file.open(filePath, ios::in | ios::out);
     
     return file.is_open();
 }
 
-void File::writeFile(string line) {
+void File::writeFile(string line, bool pointerReset = false) {
     if (!openFile()) return;
-
+    if (pointerReset) {
+        file.clear();
+        file.seekg(0, ios_base::beg);
+    }
     file << line;
 }
 
 string* File::readFile() {
     if (!openFile()) return nullptr;
 
-    file.seekg(0);
+    file.seekp(0, ios_base::beg);
 
     string line;
     string* data = new string[500];
@@ -64,6 +66,16 @@ string* File::readFile() {
 
     data[index] = '\0';
     return data;
+}
+
+void File::clearFile() {
+    if (file.is_open()) file.close();
+
+    ofstream f(path, ios::out | ios::trunc);
+
+    if (f.is_open()) f.close();
+
+    openFile();
 }
 
 File::~File() {
