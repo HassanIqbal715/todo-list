@@ -34,9 +34,8 @@ JsonObject::~JsonObject() {}
 JSON* JSON::Instance = nullptr;
 
 JSON* JSON::instance() {
-    if (Instance == nullptr) {
+    if (Instance == nullptr)
         Instance = new JSON;
-    }
     return Instance;
 }
 
@@ -140,6 +139,13 @@ vector<JsonObject*> JSON::readLine(string line) {
     return objectsBuffer;
 }
 
-JSON::~JSON() {
+void JSON::destroyObjectsVector(vector<JsonObject*> &objects) {
+    for (int i = 0; i < objects.size(); i++) {
+        delete objects[i];
+    }
+}
 
+JSON::~JSON() {
+    if (Instance != nullptr)
+        delete Instance;
 }

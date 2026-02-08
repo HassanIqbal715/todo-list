@@ -37,4 +37,5 @@ public:
     void tokenize(string line);
     void extractKeyValue();
     vector<JsonObject*> readLine(string line);
+    void destroyObjectsVector(vector<JsonObject*> &objects);
 };
