@@ -7,4 +7,5 @@
 using namespace std;
 
 TaskStatus stringToTaskStatus(string str);
+string toLowerCase(string str);
 void printFormattedTime(char* time);

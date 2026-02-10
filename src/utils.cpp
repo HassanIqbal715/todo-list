@@ -1,18 +1,33 @@
 #include"../include/utils.h"
 
 TaskStatus stringToTaskStatus(string str) {
-    if (str.compare("0") == 0) {
+    if (str.compare("0") == 0 || 
+        toLowerCase(str).compare("todo") == 0
+    ) {
         return TaskStatus::TODO;
     }
-    else if (str.compare("1") == 0) {
+    else if (str.compare("1") == 0 || 
+        toLowerCase(str).compare("in progress") == 0
+    ) {
         return TaskStatus::IN_PROGESS;
     }
-    else if (str.compare("2") == 0) {
+    else if (str.compare("2") == 0 ||  
+        toLowerCase(str).compare("done") == 0
+    ) {
         return TaskStatus::DONE;
     }
     else {
         return TaskStatus::NA;
     }
+}
+
+string toLowerCase(string str) {
+    for (int i = 0; i < str.length(); i++) {
+        if (str[i] >= 'A' || str[i] <= 'Z') {
+            str[i] = tolower(str[i]);
+        }
+    }
+    return str;
 }
 
 void printFormattedTime(char* time) {
