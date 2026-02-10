@@ -20,6 +20,16 @@ int TaskHandler::findMinId(vector<Task*> &tasks) {
     return tasks.size() + 1;
 }
 
+vector<Task*>::iterator TaskHandler::searchById(vector<Task*> &tasks, int id) {    
+    for (vector<Task*>::iterator it = tasks.begin(); it != tasks.end(); it++) {
+        if ((*it)->id == id) {
+            return it;
+        }
+    }
+    // Not found
+    return tasks.end();
+}
+
 TaskHandler* TaskHandler::instance() {
     if (Instance == nullptr)
         Instance = new TaskHandler;
@@ -61,18 +71,24 @@ void TaskHandler::addTask(vector<Task*> &tasks, string desc) {
     tasks.push_back(task);
 }
 
-void TaskHandler::updateTask() {
-
+void TaskHandler::updateTask(vector<Task*> &tasks, int id, TaskStatus status) {
+    auto taskIterator = searchById(tasks, id);
+    if (taskIterator == tasks.end()) {
+        cerr << "Failed! provided ID \"" << id << "\" not found!" << endl; 
+        return;
+    }
+    Task* taskData = (*taskIterator);
+    taskData->status = status;
+    taskData->updatedAt = chrono::system_clock().now();
 }
 
-void TaskHandler::deleteTask(vector<Task*> &tasks, int id) {
-    for (vector<Task*>::iterator it = tasks.begin(); it != tasks.end(); it++) {
-        if ((*it)->id == id) {
-            tasks.erase(it);
-            return;
-        }
+void TaskHandler::deleteTask(vector<Task*> &tasks, int id) {    
+    auto taskIterator = searchById(tasks, id);
+    if (taskIterator == tasks.end()) {
+        cerr << "Failed! provided ID \"" << id << "\" not found!" << endl;
+        return;
     }
-    cerr << "Failed! provided ID \"" << id << "\" not found!" << endl; 
+    tasks.erase(taskIterator);
 }
 
 void TaskHandler::listTasks(vector<Task*> &tasks) {
@@ -83,7 +99,7 @@ void TaskHandler::listTasks(vector<Task*> &tasks) {
     cout << "=================================\n";
 }
 
-void TaskHandler::writeTasks(vector<Task*> tasks, File* file) {
+void TaskHandler::writeTasks(vector<Task*> &tasks, File* &file) {
     file->clearFile();
     string* data = new string[500];
     data[0] = "[\n";
